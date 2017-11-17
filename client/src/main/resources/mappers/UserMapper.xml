@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xdchen.netty.client.dao.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.xdchen.netty.client.model.User" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="channel_id" property="channelId" jdbcType="CHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="true_name" property="trueName" jdbcType="VARCHAR" />
+    <result column="linkman" property="linkman" jdbcType="VARCHAR" />
+    <result column="contact_info" property="contactInfo" jdbcType="VARCHAR" />
+    <result column="ic_src" property="icSrc" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_mod_time" property="lastModTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>

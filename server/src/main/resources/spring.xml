@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>application.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="serverInitializer" class="com.xdchen.netty.server.CardServerInitializer"
+          init-method="init">
+        <property name="timeout" value="${app.channel.readtimeout}" />
+        <property name="handlerDispatcher" ref="handlerDispatcher" />
+    </bean>
+
+    <bean id="handlerDispatcher" class="com.xdchen.netty.handler.dispatch.HandlerDispatcher">
+        <property name="messageExecutor">
+            <bean class="com.xdchen.netty.model.FixedThreadPoolExecutor"
+                  destroy-method="shutdown">
+                <constructor-arg value="${app.handler.pool.corePoolSize}" />
+                <constructor-arg value="${app.handler.pool.maximumPoolSize}" />
+                <constructor-arg value="${app.handler.pool.keepAliveSecond}" />
+                <constructor-arg value="${app.handler.pool.name}" />
+            </bean>
+        </property>
+        <property name="sleepTime" value="${app.handler.sleepTime}" />
+        <property name="handlerMap" ref="gameHandlerMap" />
+    </bean>
+
+    <bean id="gameHandlerMap" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="1">
+                    <bean class="com.xdchen.netty.handler.InitHandler">
+                    </bean>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+</beans>

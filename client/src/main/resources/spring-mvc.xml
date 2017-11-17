@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+	<!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
+	<context:component-scan base-package="com.xdchen.netty.client.**.controller">
+	   	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />   
+	   	<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+		<!-- 不能屏蔽Component，否则能启动但是访问url就404页面，观察后可能是springmvc中存在使用Componet的注解，例如注解@ControllerAdvice使用了@Component注解 -->
+		<!-- <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component" /> -->   
+	</context:component-scan>
+	
+	<!-- 引入配置文件 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:application.properties" />
+	</bean>
+
+	<!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" />	<!-- JSON转换器 -->
+			</list>
+		</property>
+	</bean>
+
+
+	<mvc:annotation-driven>
+		<!-- 处理responseBody 里面日期类型 -->  
+        <mvc:message-converters>
+			<ref bean="stringHttpMessageConverter"/>
+			<ref bean="mappingJackson2HttpMessageConverter"/>
+			<!--<ref bean="marshallingHttpMessageConverter"/>-->
+        </mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean id="stringHttpMessageConverter"
+		  class="org.springframework.http.converter.StringHttpMessageConverter"/>
+
+	<bean id="marshallingHttpMessageConverter"
+		  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<property name="marshaller" ref="castorMarshaller"/>
+		<property name="unmarshaller" ref="castorMarshaller"/>
+	</bean>
+
+	<bean id="mappingJackson2HttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="objectMapper">
+			<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+				<property name="dateFormat">
+					<bean class="java.text.SimpleDateFormat">
+						<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller"/>
+
+
+	<!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 这里的配置我的理解是自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址 -->
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!--国际化-->
+	<bean id="messageSource"
+		  class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="basenames">
+			<list>
+				<value>i18n.main</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+		<!-- 这里配置将使用上面国际化配置的messageSource -->
+		<property name="validationMessageSource" ref="messageSource"/>
+	</bean>
+
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="cookieName" value="language"/>
+		<property name="cookieMaxAge" value="94608000"/>
+		<property name="defaultLocale" value="zh" />
+	</bean>
+
+
+	<!-- 配置文件上传，如果没有使用文件上传可以不用配置，当然如果不配，那么配置文件中也不必引入上传组件包 -->
+	<!--<bean id="multipartResolver"-->
+		  <!--class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+		<!--&lt;!&ndash; 默认编码 &ndash;&gt;-->
+		<!--<property name="defaultEncoding" value="utf-8" />-->
+		<!--&lt;!&ndash; 文件大小最大值 &ndash;&gt;-->
+		<!--<property name="maxUploadSize" value="10485760000" />-->
+		<!--&lt;!&ndash; 内存中的最大值 &ndash;&gt;-->
+		<!--<property name="maxInMemorySize" value="40960" />-->
+	<!--</bean>-->
+
+	<!-- 当在web.xml 中   DispatcherServlet使用 <url-pattern>/</url-pattern> 映射时，能映射静态资源 -->
+	<mvc:default-servlet-handler/>
+
+	<!-- 静态资源映射 -->
+	<!--<mvc:resources mapping="/html/**" location="/WEB-INF/html/" />-->
+	<!--<mvc:resources mapping="/resources/**" location="/resources/" />-->
+
+</beans>
