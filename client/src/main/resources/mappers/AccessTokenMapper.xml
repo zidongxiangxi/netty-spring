@@ -6,13 +6,8 @@
       WARNING - @mbggenerated
     -->
     <id column="token_id" property="tokenId" jdbcType="VARCHAR" />
-    <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
-    <result column="authentication_id" property="authenticationId" jdbcType="VARCHAR" />
-    <result column="refresh_token" property="refreshToken" jdbcType="VARCHAR" />
-    <result column="token_type" property="tokenType" jdbcType="VARCHAR" />
     <result column="token_expired_seconds" property="tokenExpiredSeconds" jdbcType="INTEGER" />
-    <result column="refresh_token_expired_seconds" property="refreshTokenExpiredSeconds" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
 </mapper>

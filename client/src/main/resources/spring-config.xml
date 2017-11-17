@@ -20,4 +20,5 @@
         <property name="location" value="classpath:application.properties" />
     </bean>
 
+    <import resource="spring-config-mybatis.xml"/>
 </beans>

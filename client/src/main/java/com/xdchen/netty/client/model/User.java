@@ -8,8 +8,8 @@ public class User {
      * 用户id
      */
     @Id
-    @Column(name = "channel_id")
-    private String channelId;
+    @Column(name = "user_id")
+    private String userId;
 
     /**
      * 帐号
@@ -28,19 +28,6 @@ public class User {
      */
     @Column(name = "true_name")
     private String trueName;
-
-    private String linkman;
-
-    @Column(name = "contact_info")
-    private String contactInfo;
-
-    /**
-     * IC系统SRC标识
-     */
-    @Column(name = "ic_src")
-    private String icSrc;
-
-    private String memo;
 
     /**
      * 帐号状态，-1-删除，0-冻结，1-激活
@@ -62,19 +49,19 @@ public class User {
     /**
      * 获取用户id
      *
-     * @return channel_id - 用户id
+     * @return user_id - 用户id
      */
-    public String getChannelId() {
-        return channelId;
+    public String getUserId() {
+        return userId;
     }
 
     /**
      * 设置用户id
      *
-     * @param channelId 用户id
+     * @param userId 用户id
      */
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     /**
@@ -143,66 +130,6 @@ public class User {
      */
     public void setTrueName(String trueName) {
         this.trueName = trueName;
-    }
-
-    /**
-     * @return linkman
-     */
-    public String getLinkman() {
-        return linkman;
-    }
-
-    /**
-     * @param linkman
-     */
-    public void setLinkman(String linkman) {
-        this.linkman = linkman;
-    }
-
-    /**
-     * @return contact_info
-     */
-    public String getContactInfo() {
-        return contactInfo;
-    }
-
-    /**
-     * @param contactInfo
-     */
-    public void setContactInfo(String contactInfo) {
-        this.contactInfo = contactInfo;
-    }
-
-    /**
-     * 获取IC系统SRC标识
-     *
-     * @return ic_src - IC系统SRC标识
-     */
-    public String getIcSrc() {
-        return icSrc;
-    }
-
-    /**
-     * 设置IC系统SRC标识
-     *
-     * @param icSrc IC系统SRC标识
-     */
-    public void setIcSrc(String icSrc) {
-        this.icSrc = icSrc;
-    }
-
-    /**
-     * @return memo
-     */
-    public String getMemo() {
-        return memo;
-    }
-
-    /**
-     * @param memo
-     */
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 
     /**
