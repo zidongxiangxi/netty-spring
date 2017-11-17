@@ -143,7 +143,7 @@ public class HandlerDispatcher implements Runnable {
 			else {
 				HandlerDispatcher.logger.warn("指令 [{}]找不到", commandId);
 			}
-			this.request.getCtx().channel().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
+//			this.request.getCtx().channel().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
 		}
 	}
 }

@@ -2,6 +2,7 @@ package com.xdchen.netty.server;
 
 import com.xdchen.netty.handler.HttpRequestHandler;
 import com.xdchen.netty.handler.dispatch.HandlerDispatcher;
+import com.xdchen.netty.model.Room;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -14,6 +15,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class CardServerInitializer extends ChannelInitializer<SocketChannel> {
     private int timeout = 3600;
     private HandlerDispatcher handlerDispatcher;
+    private Room room = new Room();
 
     public void init() {
         new Thread(this.handlerDispatcher).start();
@@ -28,7 +30,7 @@ public class CardServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new HttpRequestHandler("/ws"));
         pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
         pipeline.addLast(new ReadTimeoutHandler(this.timeout));
-        pipeline.addLast(new ServerAdapter(this.handlerDispatcher));
+        pipeline.addLast(new ServerAdapter(this.handlerDispatcher, room));
     }
 
     public void setTimeout(int timeout) {
@@ -37,5 +39,9 @@ public class CardServerInitializer extends ChannelInitializer<SocketChannel> {
 
     public void setHandlerDispatcher(HandlerDispatcher handlerDispatcher) {
         this.handlerDispatcher = handlerDispatcher;
+    }
+
+    public Room getRoom() {
+        return room;
     }
 }

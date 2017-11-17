@@ -13,6 +13,7 @@
 		<input type="text" name="message"  style="width: 300px" value="Welcome to www.waylau.com">
 		<input type="button" value="发送消息" onclick="send(this.form.message.value)">
 		<input type="button" onclick="javascript:document.getElementById('responseText').value=''" value="清空聊天记录">
+        <input type="button" id="begin" style="display: none" value="开始">
 	</form>
 	<br> 
 	<br> 
@@ -20,6 +21,7 @@
 	
 	<script src="/resources/jquery-2.1.1.js"></script>
 	<script type="text/javascript">
+        var $begin = $("#begin");
         function getCookie(name)
         {
             var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
@@ -30,6 +32,10 @@
         }
 
         $(document).ready(function () {
+            $begin.click(function () {
+                send('{"id":5}');
+            });
+
             var token = getCookie("token");
             if (!token) {
                 alert("用户未登录！");
@@ -42,10 +48,25 @@
             if (window.WebSocket) {
                 socket = new WebSocket("ws://localhost:8080/ws?token=" + token);
                 socket.onmessage = function(event) {
+                    console.log(event.data);
                     var result = JSON.parse(event.data);
                     if (result.code == 0) {
                         if (result.cmd == 1) {
                             var ta = document.getElementById('responseText');
+                            ta.value = ta.value + '\n' + result.data;
+                        } else if (result.cmd == 2) {
+                            $begin.show();
+                            $begin.removeAttr("disabled");
+                        } else if (result.cmd == 3) {
+                            $begin.hide();
+                            $begin.attr("disabled", "disabled");
+                        } else if (result.cmd == 4) {
+
+                        } else if (result.cmd == 5) {
+                            $begin.hide();
+                            $begin.attr("disabled", "disabled");
+                            var ta = document.getElementById('responseText');
+                            ta.value += '\n' + '分到的排为：';
                             ta.value = ta.value + '\n' + result.data;
                         }
                     }
@@ -67,8 +88,7 @@
                     return;
                 }
                 if (socket.readyState == WebSocket.OPEN) {
-                    var command = {id : 1, data: message};
-                    socket.send(JSON.stringify(command));
+                    socket.send(message);
                 } else {
                     alert("连接没有开启.");
                 }

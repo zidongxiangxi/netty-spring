@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- local环境 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	<!-- druid连接池
+		教程：http://blog.csdn.net/yunnysunny/article/details/8657095
+	 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close"><!-- 实验测试不需要init和close都正常,dbcp无init方法 -->
+
+		<!-- 
+			通常来说，只需要修改initialSize、minIdle、maxActive。
+
+			如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。分库分表较多的数据库，建议配置为false。
+			
+			poolPreparedStatements在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。5.5及以上版本有PSCache，建议开启
+ 		-->
+		<!-- 基本属性 url、user、password -->
+		<property name="url" value="${db.mysql.url}" />
+		<property name="username" value="${db.mysql.username}" />
+		<property name="password" value="${db.mysql.password}" />
+		<!-- <property name="driverClassName" value="${db.mysql.driver}" /> 能自动识别 -->
+
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="${db.mysql.initialSize}" />
+		<property name="minIdle" value="${db.mysql.minIdle}" />
+		<property name="maxActive" value="${db.mysql.maxActive}" />
+		<!-- <property name="maxIdle" value="10" /> 该属性被druid标记为废弃，为了兼容dbcp而存在。maxIdle是个无意义的定义-->
+
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${db.mysql.maxWait}" />
+
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+
+		<!-- 配置监控统计拦截的filters -->
+		<!-- <property name="filters" value="stat" /> -->
+		<property name="proxyFilters">
+	        <list>
+	            <ref bean="stat-filter" />
+	        </list>
+	    </property>
+	</bean>
+	<bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
+	    <property name="slowSqlMillis" value="10000" />
+	    <property name="logSlowSql" value="true" />
+	    <property name="mergeSql" value="true" />
+	</bean>
+
+
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- <property name="configLocation" value="classpath:mybatis-config.xml" 
+			/> -->
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mappers/**/*.xml"/>
+		<!--<property name="typeAliasesPackage" value="com.isea533.mybatis.model"/>-->
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageInterceptor">
+					<!-- 这里的几个配置主要演示如何使用，如果不理解，一定要去掉下面的配置 -->
+					<property name="properties">
+						<value>
+							helperDialect=mysql
+							reasonable=false
+						</value>
+					</property>
+				</bean>
+				<!--<bean class="com.ybj.open.mybatis.interceptor.MybatisSqlInterceptor"/>-->
+			</array>
+		</property>
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.xdchen.netty.client.dao"/>
+		<property name="markerInterface" value="tk.mybatis.mapper.common.Marker"/>
+		<!-- 通用Mapper通过属性注入进行配置，默认不配置时会注册Mapper<T>接口 -->
+		<property name="properties">
+			<value>
+				mappers=tk.mybatis.mapper.common.Mapper
+			</value>
+		</property>
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+</beans>

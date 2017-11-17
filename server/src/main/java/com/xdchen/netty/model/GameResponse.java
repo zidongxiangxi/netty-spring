@@ -11,6 +11,13 @@ public class GameResponse {
 	private Object retData;
 	private Channel channel;
 
+	public GameResponse(Command command) {
+		this.code = SUCCESS_CODE;
+		this.command = command;
+		this.retData = null;
+		this.channel = null;
+	}
+
     public GameResponse(Command command, Channel channel) {
         this.code = SUCCESS_CODE;
         this.command = command;

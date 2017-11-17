@@ -3,6 +3,8 @@ package com.xdchen.netty.server;
 import com.xdchen.netty.handler.dispatch.HandlerDispatcher;
 import com.xdchen.netty.model.Command;
 import com.xdchen.netty.model.GameRequest;
+import com.xdchen.netty.model.Room;
+import com.xdchen.netty.model.db.User;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.*;
@@ -15,14 +17,34 @@ public class ServerAdapter extends SimpleChannelInboundHandler<TextWebSocketFram
 
 	private static final String WEBSOCKET_PATH = "/ws";
 	private HandlerDispatcher handlerDispatcher;
+	private Room room;
 
 
 	public void setHandlerDispatcher(HandlerDispatcher handlerDispatcher) {
 		this.handlerDispatcher = handlerDispatcher;
 	}
 
-	public ServerAdapter(HandlerDispatcher handlerDispatcher) {
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public ServerAdapter(HandlerDispatcher handlerDispatcher, Room room) {
 		this.handlerDispatcher = handlerDispatcher;
+		this.room = room;
+	}
+
+	@Override
+	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {  // (2)
+		Channel incoming = ctx.channel();
+		room.addUser(incoming, new User());
+		System.out.println("Client:" + incoming.remoteAddress() + "加入");
+	}
+
+	@Override
+	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {  // (3)
+		Channel outing = ctx.channel();
+		room.removeUser(outing);
+		System.out.println("Client:" + outing.remoteAddress() +"加入");
 	}
 
 	@Override
