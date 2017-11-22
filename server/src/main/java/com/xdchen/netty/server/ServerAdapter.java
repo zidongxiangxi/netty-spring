@@ -4,7 +4,6 @@ import com.xdchen.netty.handler.dispatch.HandlerDispatcher;
 import com.xdchen.netty.model.Command;
 import com.xdchen.netty.model.GameRequest;
 import com.xdchen.netty.model.Room;
-import com.xdchen.netty.model.db.User;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.*;
@@ -33,12 +32,12 @@ public class ServerAdapter extends SimpleChannelInboundHandler<TextWebSocketFram
 		this.room = room;
 	}
 
-	@Override
-	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {  // (2)
-		Channel incoming = ctx.channel();
-		room.addUser(incoming, new User());
-		System.out.println("Client:" + incoming.remoteAddress() + "加入");
-	}
+//	@Override
+//	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {  // (2)
+//		Channel incoming = ctx.channel();
+//		room.addUser(incoming, new User());
+//		System.out.println("Client:" + incoming.remoteAddress() + "加入");
+//	}
 
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {  // (3)

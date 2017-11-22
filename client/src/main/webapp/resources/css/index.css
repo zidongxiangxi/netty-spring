@@ -1,0 +1,51 @@
+.container {
+    width: 1200px;
+    height: 600px;
+    background-color: #5cb85c;
+    position: relative;
+    left: 50%;
+    margin-left: -600px;
+    display: none;
+}
+.left {
+    width: 200px;
+    height:600px;
+    float: left;
+    background-color: #5bc0de;
+}
+.right {
+    width: 200px;
+    height:600px;
+    float: right;
+    background-color: #5bc0de;
+}
+.center {
+    width: 800px;
+    height: 200px;
+    background-color: #f0ad4e;
+    float: left;
+    top: 100%;
+    position: relative;
+    margin-top: -200px;
+}
+.card {
+    width: 105px;
+    height: 150px;
+    position: absolute;
+}
+.card-cover {
+    background-image: url('/resources/images/puke/cover.jpg');
+}
+.click {
+    top: -5px;
+}
+#left-container, #right-container {
+    margin: 100px auto;
+    width: 105px;
+    height: 400px;
+}
+#center-container {
+    margin: 25px auto;
+    width: 600px;
+    height: 150px;
+}

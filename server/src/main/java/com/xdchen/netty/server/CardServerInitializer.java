@@ -1,6 +1,6 @@
 package com.xdchen.netty.server;
 
-import com.xdchen.netty.handler.HttpRequestHandler;
+import com.xdchen.netty.handler.AddUserHandler;
 import com.xdchen.netty.handler.dispatch.HandlerDispatcher;
 import com.xdchen.netty.model.Room;
 import io.netty.channel.ChannelInitializer;
@@ -27,7 +27,7 @@ public class CardServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(64*1024));
         pipeline.addLast(new ChunkedWriteHandler());
-        pipeline.addLast(new HttpRequestHandler("/ws"));
+        pipeline.addLast(new AddUserHandler(room));
         pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
         pipeline.addLast(new ReadTimeoutHandler(this.timeout));
         pipeline.addLast(new ServerAdapter(this.handlerDispatcher, room));

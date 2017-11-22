@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="/resources/css/index.css" type="text/css">
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <div id="left-container">
+            <div class="card card-cover"></div>
+        </div>
+    </div>
+    <div class="center">
+        <div id="center-container">
+            <div class="card" style="background-image: url('/resources/images/puke/3_1.jpg')"></div>
+        </div>
+    </div>
+    <div class="right">
+        <div id="right-container">
+            <div class="card card-cover"></div>
+        </div>
+    </div>
+</div>
+<form onsubmit="return false;">
+    <h3>系统信息：</h3>
+    <textarea id="responseText" style="width: 500px; height: 300px;" readonly></textarea>
+    <input type="button" id="begin" style="display: none" value="开始">
+</form>
+<script src="/resources/js/jquery-2.1.1.js"></script>
+<script src="/resources/js/jquery.cookie.js"></script>
+<script src="/resources/js/command.js"></script>
+<script type="text/javascript">
+    function randomString(len) {
+        len = len || 32;
+        var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        var maxPos = $chars.length;
+        var pwd = '';
+        for (var i = 0; i < len; i++) {
+            pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+    }
+
+    var $begin = $("#begin");
+    var token = $.cookie("token");
+    if (!token) {
+        token = randomString(15);
+        $.cookie("token", token);
+    }
+
+    $(document).ready(function () {
+        $begin.click(function () {
+            send('{"id":5}');
+        });
+
+//            var token = getCookie("token");
+//            if (!token) {
+//                alert("用户未登录！");
+//                return;
+//            }
+        var socket;
+        if (!window.WebSocket) {
+            window.WebSocket = window.MozWebSocket;
+        }
+        if (window.WebSocket) {
+            socket = new WebSocket("ws://localhost:8080/ws?token=" + token);
+            socket.onmessage = function (event) {
+                COMMAND.dealResponse(JSON.parse(event.data));
+            };
+            socket.onopen = function (event) {
+                var ta = document.getElementById('responseText');
+                ta.value = "连接开启!";
+                send('{"id":1}');
+            };
+            socket.onclose = function (event) {
+                var ta = document.getElementById('responseText');
+                ta.value = ta.value + "连接被关闭";
+            };
+        } else {
+            alert("你的浏览器不支持 WebSocket！");
+        }
+
+        function send(message) {
+            if (!window.WebSocket) {
+                return;
+            }
+            if (socket.readyState == WebSocket.OPEN) {
+                socket.send(message);
+            } else {
+                alert("连接没有开启.");
+            }
+        }
+    });
+    //		var data = {
+    //		    leftCount: 17,
+    //			rightCount: 17,
+    //			cards: [{number: 3, color: 1}, {number: 3, color: 2}, {number: 3, color: 3}, {number: 3, color: 4}]
+    //		};
+    //        COMMAND.initCards(data);
+</script>
+</body>
+</html>

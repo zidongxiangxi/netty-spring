@@ -1,4 +1,4 @@
-package com.xdchen.netty.handler;
+package com.xdchen.netty.handler.cmd;
 
 import com.xdchen.netty.model.GameRequest;
 import com.xdchen.netty.model.GameResponse;

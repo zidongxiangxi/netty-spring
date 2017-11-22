@@ -7,42 +7,42 @@ import net.sf.json.JSONObject;
 public class GameResponse {
     public final static int SUCCESS_CODE = 0;
 	private int code;
-	private Command command;
+	private int cmd;
 	private Object retData;
 	private Channel channel;
 
-	public GameResponse(Command command) {
+	public GameResponse(int cmd) {
 		this.code = SUCCESS_CODE;
-		this.command = command;
+		this.cmd = cmd;
 		this.retData = null;
 		this.channel = null;
 	}
 
-    public GameResponse(Command command, Channel channel) {
+    public GameResponse(int cmd, Channel channel) {
         this.code = SUCCESS_CODE;
-        this.command = command;
-        this.retData = null;
+        this.cmd = cmd;
         this.channel = channel;
-    }
-
-	public GameResponse(int code, Command command, Channel channel) {
-		this.code = code;
-		this.command = command;
 		this.retData = null;
-		this.channel = channel;
 	}
 
-	public GameResponse(int code, Command command, Object retData, Channel channel) {
+	public GameResponse(int code, int cmd, Channel channel) {
 		this.code = code;
-		this.command = command;
-		this.retData = retData;
+		this.cmd = cmd;
+		this.channel = channel;
+		this.retData = null;
+	}
+
+	public GameResponse(int code, int cmd, Channel channel, Object retData) {
+		this.code = code;
+		this.cmd = cmd;
         this.channel = channel;
-    }
+		this.retData = retData;
+	}
 
 	public String getResponseString() {
 		JSONObject result = new JSONObject();
 		result.put("code", code);
-		result.put("cmd", command.getId());
+		result.put("cmd", cmd);
 		result.put("data", retData);
 		return result.toString();
 	}
@@ -55,12 +55,12 @@ public class GameResponse {
 		this.code = code;
 	}
 
-	public Command getCommand() {
-		return command;
+	public int getCmd() {
+		return cmd;
 	}
 
-	public void setCommand(Command command) {
-		this.command = command;
+	public void setCmd(int cmd) {
+		this.cmd = cmd;
 	}
 
 	public Object getRetData() {

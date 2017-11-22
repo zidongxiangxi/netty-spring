@@ -34,10 +34,12 @@
         <constructor-arg>
             <map>
                 <entry key="1">
-                    <bean class="com.xdchen.netty.handler.InitHandler"/>
+                    <bean class="com.xdchen.netty.handler.cmd.InitHandler">
+                        <constructor-arg ref="serverInitializer"/>
+                    </bean>
                 </entry>
                 <entry key="5">
-                    <bean class="com.xdchen.netty.handler.BeginHandler">
+                    <bean class="com.xdchen.netty.handler.cmd.BeginHandler">
                         <constructor-arg ref="serverInitializer"/>
                     </bean>
                 </entry>

@@ -2,25 +2,23 @@ package com.xdchen.netty.model;
 
 import com.xdchen.netty.exception.BusiException;
 import com.xdchen.netty.model.db.User;
-import com.xdchen.netty.service.CardService;
-import com.xdchen.netty.service.ICardService;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Room {
     private static final int MAX_USERS = 3;
     private Map<Channel, User> chanelToUserMap = new ConcurrentHashMap<>(3);
-    private Map<Channel, List<Card>> userCards = new ConcurrentHashMap<>(3);
+    private Map<String, List<Card>> userCards = new ConcurrentHashMap<>(3);
+    private Vector<Channel> channelList = new Vector<>(3);
     private ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private Channel[] beginChannels = new Channel[3];
+    private User[] beginUsers = new User[3];
     private Channel master = null;
     private volatile boolean canStart = false,
             start = false;
@@ -29,45 +27,77 @@ public class Room {
         if (channels.size() >= MAX_USERS) {
             throw new BusiException("房间已经满人");
         }
-//        if (start) {
-//            throw new BusiException("游戏已经开始");
-//        }
-        if (channels.size() == 0) {
-            master = channel;
+        for (Map.Entry<Channel, User> entry : chanelToUserMap.entrySet()) {
+            if (entry.getValue().getUsername().equals(user.getUsername())) {
+                throw new BusiException("同个用户，不能重复登录");
+            }
         }
-        chanelToUserMap.put(channel, user);
-        channels.add(channel);
-        if (chanelToUserMap.size() == MAX_USERS) {
-            this.start();
+        if (start) {
+            boolean validUser = false;
+            for (int i = 0; i < beginUsers.length; i++) {
+                if (user.getUsername().equals(beginUsers[i].getUsername())) {
+                    beginChannels[i] = channel;
+                    channelList.set(i, channel);
+                    validUser = true;
+                    break;
+                }
+            }
+            if (!validUser) {
+                throw new BusiException("房间已经开始游戏");
+            }
+        } else {
+            if (channels.size() == 0) {
+                master = channel;
+            }
+            chanelToUserMap.put(channel, user);
+            channels.add(channel);
+            channelList.add(channel);
+            if (chanelToUserMap.size() == MAX_USERS) {
+                canStart = true;
+                this.prepareStart();
+            }
         }
     }
 
     public synchronized void removeUser(Channel channel) {
-        boolean temp = canStart;
-        canStart = false;
-        chanelToUserMap.remove(channel);
-        this.setMaster();
-        if (temp && master != null) {
-            master.writeAndFlush(new TextWebSocketFrame("{\"code\": 0, \"cmd\":3}"));
+        if (start) {
+            chanelToUserMap.remove(channel);
+        } else {
+            boolean temp = canStart;
+            canStart = false;
+            chanelToUserMap.remove(channel);
+            channelList.remove(channel);
+            this.setMaster();
+            if (temp && master != null) {
+                master.writeAndFlush(new TextWebSocketFrame("{\"code\": 0, \"cmd\":3}"));
+            }
         }
     }
 
-    private void start() {
-//        if (start) {
-//            throw new BusiException("游戏已经开始");
-//        }
+    public String getUsernameByChannel(Channel channel) {
+        return beginUsers[channelList.indexOf(channel)].getUsername();
+    }
+
+    private void prepareStart() {
+        if (start) {
+            throw new BusiException("游戏已经开始");
+        }
         if (channels.size() != MAX_USERS) {
             throw new BusiException("人数不够");
         }
         canStart = true;
         userCards.clear();
-        for (Channel channel : channels) {
-            userCards.put(channel, new LinkedList<>());
+        int i = 0;
+        for (Channel channel : channelList) {
+            beginChannels[i] = channel;
+            beginUsers[i] = chanelToUserMap.get(channel);
+            userCards.put(beginUsers[i].getUsername(), new LinkedList<>());
+            i++;
         }
         master.writeAndFlush(new TextWebSocketFrame("{\"code\": 0, \"cmd\":2}"));
     }
 
-    public void setMaster() {
+    private void setMaster() {
         if (!channels.contains(master)) {
             Iterator<Channel> iterator = channels.iterator();
             if (iterator.hasNext()) {
@@ -86,12 +116,20 @@ public class Room {
         this.chanelToUserMap = chanelToUserMap;
     }
 
-    public Map<Channel, List<Card>> getUserCards() {
+    public Map<String, List<Card>> getUserCards() {
         return userCards;
     }
 
-    public void setUserCards(Map<Channel, List<Card>> userCards) {
+    public void setUserCards(Map<String, List<Card>> userCards) {
         this.userCards = userCards;
+    }
+
+    public Vector<Channel> getChannelList() {
+        return channelList;
+    }
+
+    public void setChannelList(Vector<Channel> channelList) {
+        this.channelList = channelList;
     }
 
     public ChannelGroup getChannels() {
@@ -102,11 +140,43 @@ public class Room {
         this.channels = channels;
     }
 
+    public Channel[] getBeginChannels() {
+        return beginChannels;
+    }
+
+    public void setBeginChannels(Channel[] beginChannels) {
+        this.beginChannels = beginChannels;
+    }
+
+    public User[] getBeginUsers() {
+        return beginUsers;
+    }
+
+    public void setBeginUsers(User[] beginUsers) {
+        this.beginUsers = beginUsers;
+    }
+
     public Channel getMaster() {
         return master;
     }
 
     public void setMaster(Channel master) {
         this.master = master;
+    }
+
+    public boolean isCanStart() {
+        return canStart;
+    }
+
+    public void setCanStart(boolean canStart) {
+        this.canStart = canStart;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public void setStart(boolean start) {
+        this.start = start;
     }
 }

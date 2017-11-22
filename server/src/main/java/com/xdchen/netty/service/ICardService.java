@@ -9,5 +9,5 @@ import java.util.Map;
 public interface ICardService {
     List<Card> initCards();
     void shuffleCards(List<Card> cards);
-    List<Card> dealCards(Map<Channel, List<Card>> userCardsMap, List<Card> cards);
+    List<Card> dealCards(Map<String, List<Card>> userCardsMap, List<Card> cards);
 }

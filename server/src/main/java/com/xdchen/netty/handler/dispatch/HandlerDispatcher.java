@@ -1,16 +1,12 @@
 package com.xdchen.netty.handler.dispatch;
 
 
-import com.xdchen.netty.handler.GameHandler;
+import com.xdchen.netty.handler.cmd.GameHandler;
 import com.xdchen.netty.model.GameRequest;
 import com.xdchen.netty.model.GameResponse;
 import com.xdchen.netty.model.MessageQueue;
 import com.xdchen.netty.utils.ExceptionUtils;
-import com.xdchen.netty.utils.HttpUtils;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +132,7 @@ public class HandlerDispatcher implements Runnable {
 
 		private void handMessageQueue() {
 			int commandId = this.request.getCommandId();
-			GameResponse response = new GameResponse(this.request.getCommand(), request.getChannel());
+			GameResponse response = new GameResponse(this.request.getCommand().getId(), request.getChannel());
 			GameHandler handler = HandlerDispatcher.this.handlerMap.get(commandId);
 			if (handler != null)
 				handler.execute(this.request, response);

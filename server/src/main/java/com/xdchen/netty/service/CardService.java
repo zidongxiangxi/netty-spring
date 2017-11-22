@@ -14,11 +14,11 @@ public class CardService implements ICardService {
         List<Card> cards = new ArrayList<>(54);
         for (int i = 1; i < 14; i++) {
             for (int j = 1; j < 5; j++) {
-                cards.add(new Card(i, j));
+                cards.add(new Card(i + 2, j));
             }
         }
-        cards.add(new Card(14, 1));
-        cards.add(new Card(14, 2));
+        cards.add(new Card(16, 1));
+        cards.add(new Card(16, 2));
         return cards;
     }
 
@@ -35,15 +35,15 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public List<Card> dealCards(Map<Channel, List<Card>> userCardsMap, List<Card> cards) {
-        List<Channel> channels = new ArrayList<>(3);
-        for (Channel channel : userCardsMap.keySet()) {
-            userCardsMap.get(channel).clear();
-            channels.add(channel);
+    public List<Card> dealCards(Map<String, List<Card>> userCardsMap, List<Card> cards) {
+        List<String> users = new ArrayList<>(3);
+        for (String username : userCardsMap.keySet()) {
+            userCardsMap.get(username).clear();
+            users.add(username);
         }
         for (int i = 0; i < 17; i++) {
             for (int j = 0; j < 3; j++) {
-                userCardsMap.get(channels.get(j)).add(cards.remove(0));
+                userCardsMap.get(users.get(j)).add(cards.remove(0));
             }
         }
         return cards;
