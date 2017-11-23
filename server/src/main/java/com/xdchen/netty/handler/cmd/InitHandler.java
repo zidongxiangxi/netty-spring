@@ -1,10 +1,7 @@
 package com.xdchen.netty.handler.cmd;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xdchen.netty.model.Card;
-import com.xdchen.netty.model.GameRequest;
-import com.xdchen.netty.model.GameResponse;
-import com.xdchen.netty.model.Room;
+import com.xdchen.netty.model.*;
 import com.xdchen.netty.model.db.User;
 import com.xdchen.netty.server.CardServerInitializer;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -46,8 +43,15 @@ public class InitHandler implements GameHandler {
 			data.put("rightCount", rightCount);
 			data.put("cards", userCards.get(beginUsers[index].getUsername()));
 			response.setRetData(data);
-			request.getChannel().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
 			logger.info("用户[{}]掉线，重新获取卡牌", beginUsers[index].getUsername());
+			request.getChannel().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
+
+			if (index == room.getCurrentIndex()) {
+				logger.info("用户[{}]可以出牌", beginUsers[index].getUsername());
+				response.setCmd(Constant.Cmd.CAN_PLAY.value);
+				response.setRetData(null);
+				request.getChannel().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
+			}
 		}
 	}
 }

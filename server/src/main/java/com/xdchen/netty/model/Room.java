@@ -1,5 +1,6 @@
 package com.xdchen.netty.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.xdchen.netty.exception.BusiException;
 import com.xdchen.netty.model.db.User;
 import io.netty.channel.Channel;
@@ -22,6 +23,9 @@ public class Room {
     private Channel master = null;
     private volatile boolean canStart = false,
             start = false;
+    private volatile int currentIndex = 0,
+            cardsOwnerIndex = 0;
+    private JSONArray currentCards;
 
     public synchronized void addUser(Channel channel, User user) {
         if (channels.size() >= MAX_USERS) {
@@ -62,6 +66,9 @@ public class Room {
     public synchronized void removeUser(Channel channel) {
         if (start) {
             chanelToUserMap.remove(channel);
+            int index = channelList.indexOf(channel);
+            beginChannels[index] = null;
+            channelList.set(index, null);
         } else {
             boolean temp = canStart;
             canStart = false;
@@ -97,13 +104,41 @@ public class Room {
         master.writeAndFlush(new TextWebSocketFrame("{\"code\": 0, \"cmd\":2}"));
     }
 
+    public void startGame() {
+        start = true;
+        currentIndex = channelList.indexOf(master);
+    }
+
+    public int nextTurn() {
+        currentIndex = (currentIndex + 1) % MAX_USERS;
+        return currentIndex;
+    }
+
+    public void setCurrentCards(Channel channel, JSONArray cards) {
+        this.currentCards = cards;
+        this.cardsOwnerIndex = channelList.indexOf(channel);
+    }
+
+    public synchronized void gameOver() {
+        canStart = chanelToUserMap.size() >= MAX_USERS;
+        start = false;
+        channelList.clear();
+        for (Channel channel : beginChannels) {
+            if (channel != null) {
+                channelList.add(channel);
+            }
+        }
+        this.setMaster();
+    }
+
     private void setMaster() {
         if (!channels.contains(master)) {
-            Iterator<Channel> iterator = channels.iterator();
-            if (iterator.hasNext()) {
-                master = iterator.next();
-            } else {
-                master = null;
+            master = null;
+            for (Channel channel : channelList) {
+                if (channel != null) {
+                    master = channel;
+                    break;
+                }
             }
         }
     }
@@ -176,7 +211,11 @@ public class Room {
         return start;
     }
 
-    public void setStart(boolean start) {
-        this.start = start;
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public int getCardsOwnerIndex() {
+        return cardsOwnerIndex;
     }
 }

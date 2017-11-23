@@ -43,6 +43,16 @@
                         <constructor-arg ref="serverInitializer"/>
                     </bean>
                 </entry>
+                <entry key="7">
+                    <bean class="com.xdchen.netty.handler.cmd.PlayHandler">
+                        <constructor-arg ref="serverInitializer"/>
+                    </bean>
+                </entry>
+                <entry key="8">
+                    <bean class="com.xdchen.netty.handler.cmd.NotPlayHandler">
+                        <constructor-arg ref="serverInitializer"/>
+                    </bean>
+                </entry>
             </map>
         </constructor-arg>
     </bean>

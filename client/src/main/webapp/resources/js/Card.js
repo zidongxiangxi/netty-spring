@@ -13,6 +13,7 @@ function Card() {
     this.lastCards = null;
     this.cardsCanPlayOrNot = func_cardsCanPlayOrNot;
     this.getSelectedCardsArray = func_getSelectedCardsArray;
+    this.removeSelectedCards = func_removeSelectedCards;
     this.validateCards = func_validateCards;
 
 
@@ -42,6 +43,27 @@ function Card() {
             alert("选择的卡牌太小");
         }
         return canPlay;
+    }
+
+    function func_getSelectedCardsArray() {
+        var selectedCards = $(".my-card.click"), cards = [];
+        for (var i = 0; i < selectedCards.length; i++) {
+            var card = {}, target = $(selectedCards[i]);
+            card.number = target.data("number");
+            card.color = target.data("color");
+            cards.push(card);
+        }
+        return cards;
+    }
+
+    function  func_removeSelectedCards() {
+        $(".my-card.click").remove();
+        var childrens = $("#center-container").children();
+        for (var i = 0; i < childrens.length; i++) {
+            var $ele = $(childrens[i]);
+            $ele.css("left", i * 25 + 100 + "px");
+            $ele.css("z-index", i + 1);
+        }
     }
 
     function func_validateCards(selectedCards) {
@@ -328,17 +350,6 @@ function Card() {
             }
             return result;
         }
-    }
-
-    function  func_getSelectedCardsArray() {
-        var selectedCards = $(".my-card.click"), cards = [];
-        for (var i = 0; i < selectedCards.length; i++) {
-            var card = {}, target = $(selectedCards[i]);
-            card.number = target.data("number");
-            card.color = target.data("color");
-            cards.push(card);
-        }
-        return cards;
     }
 }
 var CARD  = new Card();

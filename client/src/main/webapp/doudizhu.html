@@ -34,8 +34,8 @@
 </form>
 <script src="/resources/js/jquery-2.1.1.js"></script>
 <script src="/resources/js/jquery.cookie.js"></script>
-<script src="/resources/js/Command.js"></script>
 <script src="/resources/js/Card.js"></script>
+<script src="/resources/js/Command.js"></script>
 <script type="text/javascript">
     var $buttons = $("#puke-buttons"),
         $playBtn = $("#play"),
@@ -105,7 +105,8 @@
                 if (CARD.cardsCanPlayOrNot()) {
                     cmd.data = CARD.selectedCards;
                     send(JSON.stringify(cmd));
-//                $buttons.hide();
+                    CARD.removeSelectedCards();
+                    $buttons.hide();
                 }
             });
 
@@ -114,7 +115,7 @@
                     cmd: 8
                 };
                 send(JSON.stringify(cmd));
-//            $buttons.hide();
+                $buttons.hide();
             });
         }
 

@@ -28,7 +28,7 @@ public class BeginHandler implements GameHandler {
         if (paramGameRequest.getChannel() != master) {
             throw new BusiException("不是房主，不能启动游戏");
         }
-        room.setStart(true);
+        room.startGame();
 
         List<Card> totalCards = cardService.initCards();
         cardService.shuffleCards(totalCards);

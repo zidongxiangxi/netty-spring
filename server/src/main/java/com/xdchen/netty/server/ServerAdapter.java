@@ -1,5 +1,6 @@
 package com.xdchen.netty.server;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xdchen.netty.handler.dispatch.HandlerDispatcher;
 import com.xdchen.netty.model.Command;
 import com.xdchen.netty.model.GameRequest;
@@ -7,7 +8,6 @@ import com.xdchen.netty.model.Room;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.*;
-import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +48,7 @@ public class ServerAdapter extends SimpleChannelInboundHandler<TextWebSocketFram
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-		JSONObject commandJson = JSONObject.fromObject(msg.text());
-		Command command = (Command) JSONObject.toBean(commandJson, Command.class);
+		Command command = JSONObject.parseObject(msg.text(), Command.class);
 		this.handlerDispatcher.addMessage(new GameRequest(ctx, command));
 	}
 

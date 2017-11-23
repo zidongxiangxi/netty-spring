@@ -6,26 +6,33 @@ function Command() {
 
     function func_dealResponse(result) {
         if (result.code == 0) {
-            if (result.cmd == 1) {
+            var cmd = result.cmd;
+            if (cmd == 1) {
                 func_initCards(result.data);
                 $container.show();
-            } else if (result.cmd == 2) {
+            } else if (cmd == 2) {
                 $begin.show();
                 $begin.removeAttr("disabled");
-            } else if (result.cmd == 3) {
+            } else if (cmd == 3) {
                 $begin.hide();
                 $begin.attr("disabled", "disabled");
-            } else if (result.cmd == 4) {
+            } else if (cmd == 4) {
                 if ($begin.is(":visible")) {
                     $begin.hide();
                     $begin.attr("disabled", "disabled");
                 }
                 func_initCards(result.data);
                 $container.show();
-            } else if (result.cmd == 5) {
+            } else if (cmd == 5) {
                 $buttons.show();
-            } else if (result.cmd == 6) {
+            } else if (cmd == 6) {
                 $buttons.hide();
+            } else if (cmd == 9) {
+
+            } else if (cmd == 10) {
+                CARD.lastCards = null;
+            } else if (cmd == 11) {
+                alert("游戏结束");
             }
         }
     }
