@@ -131,8 +131,8 @@ public class HandlerDispatcher implements Runnable {
 		}
 
 		private void handMessageQueue() {
-			int commandId = this.request.getCommandId();
-			GameResponse response = new GameResponse(this.request.getCommand().getId(), request.getChannel());
+			int commandId = this.request.getIntCommand();
+			GameResponse response = new GameResponse(this.request.getCommand().getCmd(), request.getChannel());
 			GameHandler handler = HandlerDispatcher.this.handlerMap.get(commandId);
 			if (handler != null)
 				handler.execute(this.request, response);

@@ -38,7 +38,7 @@
                         <constructor-arg ref="serverInitializer"/>
                     </bean>
                 </entry>
-                <entry key="5">
+                <entry key="4">
                     <bean class="com.xdchen.netty.handler.cmd.BeginHandler">
                         <constructor-arg ref="serverInitializer"/>
                     </bean>

@@ -42,9 +42,9 @@ public class GameRequest {
 		this.ctx = ctx;
 	}
 
-	public int getCommandId() {
+	public int getIntCommand() {
 		if (command != null) {
-			return command.getId();
+			return command.getCmd();
 		}
 		return -1;
 	}

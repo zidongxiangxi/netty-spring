@@ -16,14 +16,16 @@ function Command() {
                 $begin.hide();
                 $begin.attr("disabled", "disabled");
             } else if (result.cmd == 4) {
-
-            } else if (result.cmd == 5) {
                 if ($begin.is(":visible")) {
                     $begin.hide();
                     $begin.attr("disabled", "disabled");
                 }
                 func_initCards(result.data);
                 $container.show();
+            } else if (result.cmd == 5) {
+                $buttons.show();
+            } else if (result.cmd == 6) {
+                $buttons.hide();
             }
         }
     }
@@ -40,10 +42,14 @@ function Command() {
             $rightContainer.append('<div class="card card-cover" style="top: ' + (i * 10 + 100) + 'px; z-index: ' + (i + 1) + '"></div>');
         }
         var cards = data.cards;
+        cards.sort(function(a, b) {
+            var diff = a.number - b.number;
+            return diff == 0 ? b.color - a.color : diff;
+        });
         for (i = 0; i < cards.length; i++) {
             var card = cards[i];
             var backImage = "url('/resources/images/puke/" + card.number + '_' + card.color +  ".jpg')";
-            $centerContainer.append('<div class="card my-card" style="left: ' + (i * 25 + 100) + 'px; z-index: ' + (i + 1) + ';background-image: ' + backImage + '"></div>');
+            $centerContainer.append('<div class="card my-card" data-number="'+ card.number + '" data-color="' + card.color + '" style="left: ' + (i * 25 + 100) + 'px; z-index: ' + (i + 1) + ';background-image: ' + backImage + '"></div>');
         }
         $(".my-card").click(function () {
             var $self = $(this);

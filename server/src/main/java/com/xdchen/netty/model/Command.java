@@ -3,22 +3,22 @@ package com.xdchen.netty.model;
 import net.sf.json.JSONObject;
 
 public class Command {
-	private int id;
+	private int cmd;
 	private Object data;
 
 	public Command() {}
 
-	public Command(int id, JSONObject data) {
-		this.id = id;
+	public Command(int cmd, JSONObject data) {
+		this.cmd = cmd;
 		this.data = data;
 	}
 
-	public int getId() {
-		return id;
+	public int getCmd() {
+		return cmd;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setCmd(int cmd) {
+		this.cmd = cmd;
 	}
 
 	public Object getData() {

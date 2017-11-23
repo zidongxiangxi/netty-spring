@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>WebSocket Chat</title>
+    <title>斗地主</title>
     <link rel="stylesheet" href="/resources/css/index.css" type="text/css">
 </head>
 <body>
@@ -13,6 +13,10 @@
         </div>
     </div>
     <div class="center">
+        <div id="puke-buttons">
+            <button id="play">出牌</button>
+            <button id="notPlay">不出</button>
+        </div>
         <div id="center-container">
             <div class="card" style="background-image: url('/resources/images/puke/3_1.jpg')"></div>
         </div>
@@ -30,8 +34,13 @@
 </form>
 <script src="/resources/js/jquery-2.1.1.js"></script>
 <script src="/resources/js/jquery.cookie.js"></script>
-<script src="/resources/js/command.js"></script>
+<script src="/resources/js/Command.js"></script>
+<script src="/resources/js/Card.js"></script>
 <script type="text/javascript">
+    var $buttons = $("#puke-buttons"),
+        $playBtn = $("#play"),
+        $notPlayBtn = $("#notPlay");
+
     function randomString(len) {
         len = len || 32;
         var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
@@ -52,14 +61,9 @@
 
     $(document).ready(function () {
         $begin.click(function () {
-            send('{"id":5}');
+            send('{"cmd":4}');
         });
 
-//            var token = getCookie("token");
-//            if (!token) {
-//                alert("用户未登录！");
-//                return;
-//            }
         var socket;
         if (!window.WebSocket) {
             window.WebSocket = window.MozWebSocket;
@@ -72,7 +76,7 @@
             socket.onopen = function (event) {
                 var ta = document.getElementById('responseText');
                 ta.value = "连接开启!";
-                send('{"id":1}');
+                send('{"cmd":1}');
             };
             socket.onclose = function (event) {
                 var ta = document.getElementById('responseText');
@@ -92,6 +96,29 @@
                 alert("连接没有开启.");
             }
         }
+
+        function bindClickEventToButtons() {
+            $playBtn.click(function () {
+                var cmd = {
+                    cmd: 7
+                };
+                if (CARD.cardsCanPlayOrNot()) {
+                    cmd.data = CARD.selectedCards;
+                    send(JSON.stringify(cmd));
+//                $buttons.hide();
+                }
+            });
+
+            $notPlayBtn.click(function () {
+                var cmd = {
+                    cmd: 8
+                };
+                send(JSON.stringify(cmd));
+//            $buttons.hide();
+            });
+        }
+
+        bindClickEventToButtons();
     });
     //		var data = {
     //		    leftCount: 17,

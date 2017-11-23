@@ -50,5 +50,7 @@ public class BeginHandler implements GameHandler {
             paramGameResponse.setRetData(data);
             channel.writeAndFlush(new TextWebSocketFrame(paramGameResponse.getResponseString()));
         }
+        GameResponse canPlayResponse = new GameResponse(Constant.Cmd.CAN_PLAY.value);
+        room.getMaster().writeAndFlush(new TextWebSocketFrame(canPlayResponse.getResponseString()));
     }
 }
