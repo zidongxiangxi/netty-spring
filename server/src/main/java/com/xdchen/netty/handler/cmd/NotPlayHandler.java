@@ -23,7 +23,7 @@ public class NotPlayHandler implements GameHandler {
         logger.info("通知所有用户，当前用户不出牌");
         int nextUserIndex = room.nextTurn();
         if (nextUserIndex == room.getCardsOwnerIndex()) {
-            response.setCmd(Constant.Cmd.CAN_PALY_ANY_CARD.value);
+            response.setCmd(Constant.Cmd.CAN_PLAY_ANY_CARD.value);
             response.setRetData(null);
             room.getChannelList().get(nextUserIndex).writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
         }

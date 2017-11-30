@@ -31,7 +31,7 @@ function Card() {
             return false;
         }
 
-        if (!$self.lastCards || !$self.lastCards.cards || !$self.lastCards.cards.length < 1) {
+        if (!$self.lastCards || !$self.lastCards.cards || $self.lastCards.cards.length < 1) {
             return true;
         }
         var selectedCardsInfo = result.cardsInfo;
@@ -40,7 +40,15 @@ function Card() {
             && $self.lastCards.length == selectedCardsInfo.length
             && selectedCardsInfo.value > $self.lastCards.value);
         if (!canPlay) {
-            alert("选择的卡牌太小");
+            var errMsg = "选择的卡牌太小";
+            if ($self.lastCards.type == selectedCardsInfo.type) {
+                if ($self.lastCards.length != selectedCardsInfo.length) {
+                    errMsg = "选择的卡牌不符合出牌规则";
+                }
+            } else {
+                errMsg = "选择的卡牌不符合出牌规则";
+            }
+            alert(errMsg);
         }
         return canPlay;
     }
@@ -70,6 +78,13 @@ function Card() {
         var result = {isValid: false};
         if (selectedCards.length == 1) {
             result.isValid = true;
+            result.cardsInfo = {
+                type: 1,
+                level: 1,
+                length: 1,
+                value: selectedCards[0].number,
+                cards: selectedCards
+            };
         }
         result = result.isValid ? result : isDoubleForSelectedCards(selectedCards);
         result = result.isValid ? result : isStraightForSelectedCards(selectedCards);

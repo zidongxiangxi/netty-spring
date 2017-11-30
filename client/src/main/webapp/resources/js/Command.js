@@ -2,7 +2,8 @@ function Command() {
     var $container = $(".container"),
         $leftContainer = $("#left-container"),
         $centerContainer = $("#center-container"),
-        $rightContainer = $("#right-container");
+        $rightContainer = $("#right-container"),
+        $displayCards = $("#display-cards");
 
     function func_dealResponse(result) {
         if (result.code == 0) {
@@ -28,7 +29,8 @@ function Command() {
             } else if (cmd == 6) {
                 $buttons.hide();
             } else if (cmd == 9) {
-
+                CARD.lastCards = CARD.validateCards(result.data.cards).cardsInfo;
+                func_displayCards(result.data.cards);
             } else if (cmd == 10) {
                 CARD.lastCards = null;
             } else if (cmd == 11) {
@@ -70,8 +72,20 @@ function Command() {
         });
     }
 
+    function  func_displayCards(cards) {
+        $displayCards.html("");
+        var baseLeft = (600 - ((cards.length - 1) * 25 + 105)) / 2;
+
+        for (var i = 0; i < cards.length; i++) {
+            var card = cards[i];
+            var backImage = "url('/resources/images/puke/" + card.number + '_' + card.color +  ".jpg')";
+            $displayCards.append('<div class="card my-card" data-number="'+ card.number + '" data-color="' + card.color + '" style="left: ' + (baseLeft + i * 25 + 100) + 'px; z-index: ' + (i + 1) + ';background-image: ' + backImage + '"></div>');
+        }
+    }
+
     this.dealResponse = func_dealResponse;
     this.initCards = func_initCards;
+    this.displayCards = func_displayCards;
 }
 var COMMAND = new Command();
 

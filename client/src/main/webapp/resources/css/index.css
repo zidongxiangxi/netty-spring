@@ -49,7 +49,14 @@
     width: 600px;
     height: 150px;
 }
-
+#display-cards {
+    width: 800px;
+    height: 200px;
+    float: left;
+    top: 100%;
+    position: relative;
+    margin-top: -500px;
+}
 #puke-buttons {
     float: right;
     margin-top: -50px;
