@@ -1,5 +1,6 @@
 package com.xdchen.netty.handler.cmd;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xdchen.netty.model.Constant;
 import com.xdchen.netty.model.GameRequest;
 import com.xdchen.netty.model.GameResponse;
@@ -19,6 +20,7 @@ public class NotPlayHandler implements GameHandler {
 
     @Override
     public void execute(GameRequest request, GameResponse response) {
+        response.setRetData(room.getBeginUsers()[room.getCurrentIndex()]);
         room.getChannels().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
         logger.info("通知所有用户，当前用户不出牌");
         int nextUserIndex = room.nextTurn();

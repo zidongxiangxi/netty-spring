@@ -42,6 +42,13 @@ public class InitHandler implements GameHandler {
 			data.put("leftCount", leftCount);
 			data.put("rightCount", rightCount);
 			data.put("cards", userCards.get(beginUsers[index].getUsername()));
+			data.put("currentCards", room.getCurrentCards());
+			String[] users = new String[room.getBeginUsers().length];
+			int i = 0;
+			for (User user : room.getBeginUsers()) {
+				users[i++] = user.getUsername();
+			}
+			data.put("users", users);
 			response.setRetData(data);
 			logger.info("用户[{}]掉线，重新获取卡牌", beginUsers[index].getUsername());
 			request.getChannel().writeAndFlush(new TextWebSocketFrame(response.getResponseString()));

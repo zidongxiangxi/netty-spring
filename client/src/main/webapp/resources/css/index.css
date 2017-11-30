@@ -57,9 +57,25 @@
     position: relative;
     margin-top: -500px;
 }
+#display-messages {
+    width: 800px;
+    float: left;
+    top: 100%;
+    position: relative;
+    margin-top: -250px;
+    text-align: center;
+    font-size: 20px;
+    color: red;
+}
 #puke-buttons {
     float: right;
     margin-top: -50px;
     margin-right: 50px;
     display: none;
+}
+.username {
+    width: 150px;
+    text-align: center;
+    margin: -50px auto 0;
+    background-color: #f0ad4e;
 }

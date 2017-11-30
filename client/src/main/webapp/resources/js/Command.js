@@ -3,13 +3,20 @@ function Command() {
         $leftContainer = $("#left-container"),
         $centerContainer = $("#center-container"),
         $rightContainer = $("#right-container"),
-        $displayCards = $("#display-cards");
+        $displayCards = $("#display-cards"),
+        $displayMessages = $("#display-messages");
+    var leftUser = "",
+        rightUser = "";
 
     function func_dealResponse(result) {
         if (result.code == 0) {
             var cmd = result.cmd;
             if (cmd == 1) {
                 func_initCards(result.data);
+                func_displayUsers(result.data.users);
+                if (result.data.currentCards && result.data.currentCards.length > 0) {
+                    func_displayCards(result.data.currentCards);
+                }
                 $container.show();
             } else if (cmd == 2) {
                 $begin.show();
@@ -28,7 +35,17 @@ function Command() {
                 $buttons.show();
             } else if (cmd == 6) {
                 $buttons.hide();
+            } else if (cmd == 8) {
+                var username = result.data;
+                if (username == token) {
+                    $displayMessages.html("不出");
+                } else {
+                    $displayMessages.html("用户【" + username + "】不出牌");
+                }
             } else if (cmd == 9) {
+                if (result.data.user != token) {
+                    $displayMessages.html("用户【" + result.data.user + "】出牌");
+                }
                 CARD.lastCards = CARD.validateCards(result.data.cards).cardsInfo;
                 func_displayCards(result.data.cards);
             } else if (cmd == 10) {
@@ -83,9 +100,28 @@ function Command() {
         }
     }
 
+    function func_displayUsers(users) {
+        var $leftUsername = $("#left-username"),
+            $rightUsername = $("#right-username"),
+            currentUserIndex = 0;
+        for (var i = 0, length = users.length; i < length; i++) {
+            if (users[i] == token) {
+                currentUserIndex = i;
+                break;
+            }
+        }
+        var leftUserIndex = currentUserIndex == 0 ? users.length - 1 : currentUserIndex - 1,
+            rightUserIndex = currentUserIndex == users.length - 1 ? 0 : currentUserIndex + 1;
+        leftUser = users[leftUserIndex];
+        rightUser = users[rightUserIndex];
+        $leftUsername.html(leftUser);
+        $rightUsername.html(rightUser);
+    }
+
     this.dealResponse = func_dealResponse;
     this.initCards = func_initCards;
     this.displayCards = func_displayCards;
+    this.displayUsers = func_displayUsers;
 }
 var COMMAND = new Command();
 

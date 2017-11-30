@@ -218,4 +218,8 @@ public class Room {
     public int getCardsOwnerIndex() {
         return cardsOwnerIndex;
     }
+
+    public JSONArray getCurrentCards() {
+        return currentCards;
+    }
 }

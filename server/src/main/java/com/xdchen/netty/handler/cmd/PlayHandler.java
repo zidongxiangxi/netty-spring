@@ -30,7 +30,7 @@ public class PlayHandler implements GameHandler {
         //通知出的牌
         JSONObject retData = new JSONObject();
         retData.put("cards", cards);
-        retData.put("token", room.getUsernameByChannel(request.getChannel()));
+        retData.put("user", room.getUsernameByChannel(request.getChannel()));
         GameResponse gameResponse = new GameResponse(Constant.Cmd.NOTIFY.value);
         gameResponse.setRetData(retData);
         room.getChannels().writeAndFlush(new TextWebSocketFrame(gameResponse.getResponseString()));
