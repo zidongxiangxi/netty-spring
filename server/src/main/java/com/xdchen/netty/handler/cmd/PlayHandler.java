@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xdchen.netty.model.*;
 import com.xdchen.netty.server.CardServerInitializer;
+import com.xdchen.netty.service.ICardService;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 public class PlayHandler implements GameHandler {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Room room;
+    @Autowired
+    private ICardService cardService;
 
     public PlayHandler(CardServerInitializer serverInitializer) {
         this.room = serverInitializer.getRoom();
@@ -21,6 +25,23 @@ public class PlayHandler implements GameHandler {
     @Override
     public void execute(GameRequest request, GameResponse response) {
         JSONArray cards = (JSONArray) request.getCommand().getData();
+        CardsInfo cardsInfo1 = cardService.getCardsInfo(cards);
+        JSONArray currentCards = room.getCurrentCards();
+        if (cardsInfo1 == null || (currentCards != null && currentCards.size() > 0)) {
+            CardsInfo cardsInfo2 = cardService.getCardsInfo(currentCards);
+            if (cardsInfo1 == null || !cardService.moreThan(cardsInfo1, cardsInfo2)) {
+                //告诉该用户，卡牌不合法
+                GameResponse gameResponse = new GameResponse(Constant.Cmd.ERR_NOTICE.value);
+                gameResponse.setRetData("出的牌不合法");
+                request.getChannel().writeAndFlush(new TextWebSocketFrame(gameResponse.getResponseString()));
+                //重新出牌
+                gameResponse.setCmd(Constant.Cmd.CAN_PLAY.value);
+                gameResponse.setRetData(null);
+                request.getChannel().writeAndFlush(new TextWebSocketFrame(gameResponse.getResponseString()));
+                return;
+            }
+        }
+
         room.setCurrentCards(request.getChannel(), cards);
         //从服务器，删除对应玩家出的卡牌
         String username = room.getUsernameByChannel(request.getChannel());

@@ -3,7 +3,7 @@ function Card() {
     this.selectedCards = [];
     /*
      * {
-     *   "type": 1,   //类别 1-单张， 2-对子或连对， 3-顺子， 4-三条， 5-炸弹， 6-王炸
+     *   "type": 1,   //类别 1-单张， 2-对子或连对， 3-顺子， 4-三条， 5-三带一， 6三带二， 7-炸弹， 8-四带二， 9-四带四， 10王炸
      *   "level": 1,  //级别，级别高的，能吃级别低的；同级别的，需要类型相同，张数一致，而且最大值较大
      *   "length": 1, //卡牌数
      *   "value": 3,  //卡牌的有效最大值
@@ -92,8 +92,8 @@ function Card() {
         result = result.isValid ? result : isAaabForSelectedCards(selectedCards);
         result = result.isValid ? result : isAaabbForSelectedCards(selectedCards);
         result = result.isValid ? result : isAaaaForSelectedCards(selectedCards);
-        result = result.isValid ? result : isAaaabForSelectedCards(selectedCards);
-        result = result.isValid ? result : isAaaabbForSelectedCards(selectedCards);
+        result = result.isValid ? result : isAaaabcForSelectedCards(selectedCards);
+        result = result.isValid ? result : isAaaabbccForSelectedCards(selectedCards);
         result = result.isValid ? result : isKingForSelectedCards(selectedCards);
         return result;
 
@@ -147,7 +147,7 @@ function Card() {
                 return result;
             }
             var lastValue = selectedCards[0].number - 1;
-            for (var i = 0; i < selectedCards.length / 3; i += 3) {
+            for (var i = 0; i < selectedCards.length; i += 3) {
                 var value = selectedCards[i].number;
                 if (value != (lastValue + 1) || !(selectedCards[i].number == selectedCards[i + 1].number && selectedCards[i + 1].number == selectedCards[i + 2].number)) {
                     return result;
@@ -190,7 +190,7 @@ function Card() {
             result.isValid = isAaaForSelectedCards(aaaCards) && (aaaCards.length / 3 == otherCards.length);
             if (result.isValid) {
                 result.cardsInfo = {
-                    type: 4,
+                    type: 5,
                     level: 1,
                     length: selectedCards.length,
                     value: aaaCards[aaaCards.length - 1].number,
@@ -231,7 +231,7 @@ function Card() {
             result.isValid = isAaaForSelectedCards(aaaCards) && (aaaCards.length / 3 == otherCards.length / 2);
             if (result.isValid) {
                 result.cardsInfo = {
-                    type: 4,
+                    type: 6,
                     level: 1,
                     length: selectedCards.length,
                     value: aaaCards[aaaCards.length - 1].number,
@@ -260,7 +260,7 @@ function Card() {
             result.isValid = true;
             if (result.isValid) {
                 result.cardsInfo = {
-                    type: 5,
+                    type: 7,
                     level: 2,
                     length: selectedCards.length,
                     value: selectedCards[selectedCards.length - 1].number,
@@ -270,9 +270,9 @@ function Card() {
             return result;
         }
 
-        function isAaaabForSelectedCards() {
+        function isAaaabcForSelectedCards() {
             var result = {isValid: false};
-            if (selectedCards.length < 5 || selectedCards.length % 5 != 0) {
+            if (selectedCards.length < 6 || selectedCards.length % 6 != 0) {
                 return false;
             }
             var aaaaCards = [], otherCards = [];
@@ -297,11 +297,11 @@ function Card() {
                 }
             }
 
-            result.isValid = isAaaaForSelectedCards(aaaaCards) && (aaaaCards.length / 4 == otherCards.length);
+            result.isValid = isAaaaForSelectedCards(aaaaCards) && (aaaaCards.length / 4 == otherCards.length / 2);
             if (result.isValid) {
                 result.cardsInfo = {
-                    type: 5,
-                    level: 2,
+                    type: 8,
+                    level: 1,
                     length: selectedCards.length,
                     value: aaaaCards[aaaaCards.length - 1].number,
                     cards: selectedCards
@@ -310,9 +310,9 @@ function Card() {
             return result;
         }
 
-        function isAaaabbForSelectedCards() {
+        function isAaaabbccForSelectedCards() {
             var result = {isValid: false};
-            if (selectedCards.length < 6 || selectedCards.length % 6 != 0) {
+            if (selectedCards.length < 8 || selectedCards.length % 8 != 0) {
                 return result;
             }
             var aaaaCards = [], otherCards = [];
@@ -338,11 +338,11 @@ function Card() {
                     otherCards.push(selectedCards[i]);
                 }
             }
-            result.isValid = isAaaaForSelectedCards(aaaaCards) && (aaaaCards.length / 4 == otherCards.length / 2);
+            result.isValid = isAaaaForSelectedCards(aaaaCards) && (aaaaCards.length == otherCards.length);
             if (result.isValid) {
                 result.cardsInfo = {
-                    type: 5,
-                    level: 2,
+                    type: 9,
+                    level: 1,
                     length: selectedCards.length,
                     value: aaaaCards[aaaaCards.length - 1].number,
                     cards: selectedCards
@@ -356,7 +356,7 @@ function Card() {
             result.isValid = selectedCards.length == 2 && selectedCards[0].number == 16 && selectedCards[1].number == 16;
             if (result.isValid) {
                 result.cardsInfo = {
-                    type: 6,
+                    type: 10,
                     level: 3,
                     length: selectedCards.length,
                     value: 16,

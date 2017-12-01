@@ -52,6 +52,8 @@ function Command() {
                 CARD.lastCards = null;
             } else if (cmd == 11) {
                 alert("游戏结束");
+            } else if (cmd == 12) {
+                alert(result.data);
             }
         }
     }

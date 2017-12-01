@@ -1,6 +1,5 @@
 package com.xdchen.netty.handler.cmd;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xdchen.netty.model.Constant;
 import com.xdchen.netty.model.GameRequest;
 import com.xdchen.netty.model.GameResponse;
@@ -27,6 +26,7 @@ public class NotPlayHandler implements GameHandler {
         if (nextUserIndex == room.getCardsOwnerIndex()) {
             response.setCmd(Constant.Cmd.CAN_PLAY_ANY_CARD.value);
             response.setRetData(null);
+            room.setCurrentCards(request.getChannel(), null);
             room.getChannelList().get(nextUserIndex).writeAndFlush(new TextWebSocketFrame(response.getResponseString()));
         }
         response.setCmd(Constant.Cmd.CAN_PLAY.value);

@@ -25,7 +25,7 @@ public class Room {
             start = false;
     private volatile int currentIndex = 0,
             cardsOwnerIndex = 0;
-    private JSONArray currentCards;
+    private JSONArray currentCards = null;
 
     public synchronized void addUser(Channel channel, User user) {
         if (channels.size() >= MAX_USERS) {

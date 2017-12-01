@@ -57,5 +57,7 @@
         </constructor-arg>
     </bean>
 
+    <bean id="cardService" class="com.xdchen.netty.service.CardService"/>
+
     <import resource="spring-config-mybatis.xml"/>
 </beans>

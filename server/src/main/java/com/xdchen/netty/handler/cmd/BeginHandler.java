@@ -2,19 +2,20 @@ package com.xdchen.netty.handler.cmd;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xdchen.netty.exception.BusiException;
-import com.xdchen.netty.handler.cmd.GameHandler;
 import com.xdchen.netty.model.*;
 import com.xdchen.netty.server.CardServerInitializer;
-import com.xdchen.netty.service.CardService;
 import com.xdchen.netty.service.ICardService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class BeginHandler implements GameHandler {
-    private ICardService cardService = new CardService();
     private Room room;
+    @Autowired
+    private ICardService cardService;
+
     public BeginHandler(CardServerInitializer serverInitializer) {
         this.room = serverInitializer.getRoom();
     }
